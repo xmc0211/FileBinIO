@@ -1,4 +1,24 @@
-//FileBinIO.cpp by XMC
+// MIT License
+//
+// Copyright (c) 2025 xmc0211
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 #include "FileBinIO.h"
 
@@ -9,107 +29,107 @@ template <typename _Tp>
 _Tp FBMin(_Tp x, _Tp y) { return x > y ? y : x; }
 
 
-//LARGE_INTEGER×ªULONG
+//LARGE_INTEGERè½¬ULONG
 ULONG FBLIntToUl(LARGE_INTEGER x) {
     ULONG ulValue;
     ulValue = (ULONG)x.QuadPart;
     return ulValue;
 }
 
-//ULONG×ªLARGE_INTEGER
+//ULONGè½¬LARGE_INTEGER
 LARGE_INTEGER FBUlToLInt(ULONG x) {
     LARGE_INTEGER liValue{};
     liValue.QuadPart = (LONGLONG)x;
     return liValue;
 }
 
-// »ñÈ¡ÎÄ¼ş×Ö½ÚÊı£¨µ¥Î»£º×Ö½Ú£©
+// è·å–æ–‡ä»¶å­—èŠ‚æ•°ï¼ˆå•ä½ï¼šå­—èŠ‚ï¼‰
 LARGE_INTEGER FBGetFileSize(const char* filePath) {
     LARGE_INTEGER fileSize;
     fileSize.QuadPart = 0;
 
-    // ´ò¿ªÎÄ¼şÒÔ¶ÁÈ¡Æä´óĞ¡
+    // æ‰“å¼€æ–‡ä»¶ä»¥è¯»å–å…¶å¤§å°
     HANDLE hFile = CreateFileA(filePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
     if (hFile == INVALID_HANDLE_VALUE) return fileSize;
 
-    // »ñÈ¡ÎÄ¼ş´óĞ¡
+    // è·å–æ–‡ä»¶å¤§å°
     if (!GetFileSizeEx(hFile, &fileSize)) {
-        // ¹Ø±ÕÎÄ¼ş¾ä±ú
+        // å…³é—­æ–‡ä»¶å¥æŸ„
         CloseHandle(hFile);
         return fileSize;
     }
 
-    // ¹Ø±ÕÎÄ¼ş¾ä±ú
+    // å…³é—­æ–‡ä»¶å¥æŸ„
     CloseHandle(hFile);
     return fileSize;
 }
 
-// °´×Ö½Ú¶ÁÎÄ¼ş£¨´ÅÅÌ£©
-DWORD FBReadFile(const char* lpcFilePath, // ÎÄ¼şÂ·¾¶
-    UCHAR* lpcData, // ½ÓÊÕÊı¾İ¶ÎÖ¸Õë
-    LPDWORD lpdwBytesRead, // ½ÓÊÕ¶ÁÈ¡×Ö½ÚÊıÖ¸Õë 
-    LONG uiRstart, // ¶ÁÈ¡ÆğÊ¼µØÖ·
-    DWORD uiRsize /* = FB_UL_INF */ // ¶ÁÈ¡×Ü´óĞ¡£¨FB_UI_INF±íÊ¾µ½Ä©Î²£©
+// æŒ‰å­—èŠ‚è¯»æ–‡ä»¶ï¼ˆç£ç›˜ï¼‰
+DWORD FBReadFile(const char* lpcFilePath, // æ–‡ä»¶è·¯å¾„
+    UCHAR* lpcData, // æ¥æ”¶æ•°æ®æ®µæŒ‡é’ˆ
+    LPDWORD lpdwBytesRead, // æ¥æ”¶è¯»å–å­—èŠ‚æ•°æŒ‡é’ˆ 
+    LONG uiRstart, // è¯»å–èµ·å§‹åœ°å€
+    DWORD uiRsize /* = FB_UL_INF */ // è¯»å–æ€»å¤§å°ï¼ˆFB_UI_INFè¡¨ç¤ºåˆ°æœ«å°¾ï¼‰
 ) {
     LARGE_INTEGER liFileSize = FBGetFileSize(lpcFilePath);
 
-    // ÅĞ¶ÏÒç³öµÄ¿ÉÄÜ²¢±ÜÃâ
+    // åˆ¤æ–­æº¢å‡ºçš„å¯èƒ½å¹¶é¿å…
     if (lpcData == NULL) return FB_INVAILD_POINTER;
     if (uiRsize != FB_UL_INF && 1UL * sizeof(UCHAR) * uiRsize > FBLIntToUl(liFileSize)) return FB_OUT_OF_RANGE;
 
-    // ´´½¨ÎÄ¼ş¶ÔÏó
+    // åˆ›å»ºæ–‡ä»¶å¯¹è±¡
     HANDLE hFile = CreateFileA(lpcFilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return FB_ERROR;
 
-    // ¶ÁÈ¡µÄ×Ö½ÚÊı
+    // è¯»å–çš„å­—èŠ‚æ•°
     DWORD dwBytesRead;
 
-    // ÉèÖÃÆğÊ¼Î»ÖÃ
+    // è®¾ç½®èµ·å§‹ä½ç½®
     if (SetFilePointer(hFile, uiRstart, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER) {
         CloseHandle(hFile);
         return FB_ERROR;
     }
 
-    // ¶ÁÈ¡ÎÄ¼ş²¢¹Ø±Õ¾ä±ú
+    // è¯»å–æ–‡ä»¶å¹¶å…³é—­å¥æŸ„
     BOOL result = ReadFile(hFile, lpcData, FBMin <ULONG> (uiRsize, FBLIntToUl(liFileSize)), &dwBytesRead, NULL);
     CloseHandle(hFile);
 
-    // ´¦Àí¶ÁÈ¡Ê§°Ü
+    // å¤„ç†è¯»å–å¤±è´¥
     if (!result) return FB_ERROR;
 
     if (lpdwBytesRead != NULL) *lpdwBytesRead = dwBytesRead;
     return FB_SUCCESS;
 }
 
-// °´×Ö½ÚĞ´ÎÄ¼ş£¨´ÅÅÌ£©
-DWORD FBWriteFile(const char* lpcFilePath, // ÎÄ¼şÂ·¾¶
-    UCHAR* lpcData, // Ğ´ÈëÊı¾İ¶ÎÖ¸Õë
-    LPDWORD lpdwBytesWrite, // ½ÓÊÕĞ´Èë×Ö½ÚÊıÖ¸Õë 
-    LONG uiWstart, // Ğ´ÈëÆğÊ¼µØÖ·
-    DWORD uiWsize // Ğ´Èë×Ü´óĞ¡
+// æŒ‰å­—èŠ‚å†™æ–‡ä»¶ï¼ˆç£ç›˜ï¼‰
+DWORD FBWriteFile(const char* lpcFilePath, // æ–‡ä»¶è·¯å¾„
+    UCHAR* lpcData, // å†™å…¥æ•°æ®æ®µæŒ‡é’ˆ
+    LPDWORD lpdwBytesWrite, // æ¥æ”¶å†™å…¥å­—èŠ‚æ•°æŒ‡é’ˆ 
+    LONG uiWstart, // å†™å…¥èµ·å§‹åœ°å€
+    DWORD uiWsize // å†™å…¥æ€»å¤§å°
 ) {
-    // ÅĞ¶Ï¿ÕÖ¸Õë²¢±ÜÃâ
+    // åˆ¤æ–­ç©ºæŒ‡é’ˆå¹¶é¿å…
     if (lpcData == NULL) return FB_INVAILD_POINTER;
 
-    // ´´½¨ÎÄ¼ş¶ÔÏó
+    // åˆ›å»ºæ–‡ä»¶å¯¹è±¡
     HANDLE hFile = CreateFileA(lpcFilePath, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return FB_ERROR;
 
-    // Ğ´ÈëµÄ×Ö½ÚÊı
+    // å†™å…¥çš„å­—èŠ‚æ•°
     DWORD dwBytesWrite;
 
-    // ÉèÖÃÆğÊ¼Î»ÖÃ
+    // è®¾ç½®èµ·å§‹ä½ç½®
     if (SetFilePointer(hFile, uiWstart, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER) {
         CloseHandle(hFile);
         return FB_ERROR;
     }
 
-    // Ğ´ÈëÎÄ¼ş²¢¹Ø±Õ¾ä±ú
+    // å†™å…¥æ–‡ä»¶å¹¶å…³é—­å¥æŸ„
     BOOL result = WriteFile(hFile, lpcData, uiWsize, &dwBytesWrite, NULL);
     CloseHandle(hFile);
 
-    // ´¦ÀíĞ´ÈëÊ§°Ü
+    // å¤„ç†å†™å…¥å¤±è´¥
     if (!result) return FB_ERROR;
 
     if (lpdwBytesWrite != NULL) *lpdwBytesWrite = dwBytesWrite;
