@@ -1,4 +1,25 @@
-//FileBinIO.h by XMC
+// MIT License
+//
+// Copyright (c) 2025 xmc0211
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #ifndef FILEBINIO_H
 #define FILEBINIO_H
 
@@ -23,29 +44,29 @@ template <typename _Tp>
 _Tp FBMin(_Tp x, _Tp y);
 
 
-//LARGE_INTEGER×ªULONG
+//LARGE_INTEGERè½¬ULONG
 ULONG FBLIntToUl(LARGE_INTEGER x);
 
-//ULONG×ªLARGE_INTEGER
+//ULONGè½¬LARGE_INTEGER
 LARGE_INTEGER FBUlToLInt(ULONG x);
 
-// »ñÈ¡ÎÄ¼ş×Ö½ÚÊı£¨µ¥Î»£º×Ö½Ú£©
+// è·å–æ–‡ä»¶å­—èŠ‚æ•°ï¼ˆå•ä½ï¼šå­—èŠ‚ï¼‰
 LARGE_INTEGER FBGetFileSize(const char* filePath);
 
-// °´×Ö½Ú¶ÁÎÄ¼ş£¨´ÅÅÌ£©
-DWORD FBReadFile(const char* lpcFilePath, // ÎÄ¼şÂ·¾¶
-    UCHAR* lpcData, // ½ÓÊÕÊı¾İ¶ÎÖ¸Õë
-    LPDWORD lpdwBytesRead, // ½ÓÊÕ¶ÁÈ¡×Ö½ÚÊıÖ¸Õë 
-    LONG uiRstart, // ¶ÁÈ¡ÆğÊ¼µØÖ·
-    DWORD uiRsize = FB_UL_INF // ¶ÁÈ¡×Ü´óĞ¡£¨FB_UI_INF±íÊ¾µ½Ä©Î²£©
+// æŒ‰å­—èŠ‚è¯»æ–‡ä»¶ï¼ˆç£ç›˜ï¼‰
+DWORD FBReadFile(const char* lpcFilePath, // æ–‡ä»¶è·¯å¾„
+    UCHAR* lpcData, // æ¥æ”¶æ•°æ®æ®µæŒ‡é’ˆ
+    LPDWORD lpdwBytesRead, // æ¥æ”¶è¯»å–å­—èŠ‚æ•°æŒ‡é’ˆ 
+    LONG uiRstart, // è¯»å–èµ·å§‹åœ°å€
+    DWORD uiRsize = FB_UL_INF // è¯»å–æ€»å¤§å°ï¼ˆFB_UI_INFè¡¨ç¤ºåˆ°æœ«å°¾ï¼‰
 );
 
-// °´×Ö½ÚĞ´ÎÄ¼ş£¨´ÅÅÌ£©
-DWORD FBWriteFile(const char* lpcFilePath, // ÎÄ¼şÂ·¾¶
-    UCHAR* lpcData, // Ğ´ÈëÊı¾İ¶ÎÖ¸Õë
-    LPDWORD lpdwBytesWrite, // ½ÓÊÕĞ´Èë×Ö½ÚÊıÖ¸Õë 
-    LONG uiWstart, // Ğ´ÈëÆğÊ¼µØÖ·
-    DWORD uiWsize // Ğ´Èë×Ü´óĞ¡
+// æŒ‰å­—èŠ‚å†™æ–‡ä»¶ï¼ˆç£ç›˜ï¼‰
+DWORD FBWriteFile(const char* lpcFilePath, // æ–‡ä»¶è·¯å¾„
+    UCHAR* lpcData, // å†™å…¥æ•°æ®æ®µæŒ‡é’ˆ
+    LPDWORD lpdwBytesWrite, // æ¥æ”¶å†™å…¥å­—èŠ‚æ•°æŒ‡é’ˆ 
+    LONG uiWstart, // å†™å…¥èµ·å§‹åœ°å€
+    DWORD uiWsize // å†™å…¥æ€»å¤§å°
 );
 
 #endif
