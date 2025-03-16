@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2025 xmc0211
+// Copyright (c) 2025 FileBinIO - xmc0211 <xmc0211@qq.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,14 @@
 #define FILEBINIO_H
 
 #include <windows.h>
+#include <string>
+#include <tchar.h>
+
+#if defined(UNICODE)
+#define _tstring wstring
+#else
+#define _tstring string
+#endif
 
 enum FB_RESULTS {
     FB_SUCCESS = 0x0, 
@@ -43,30 +51,27 @@ _Tp FBMax(_Tp x, _Tp y);
 template <typename _Tp>
 _Tp FBMin(_Tp x, _Tp y);
 
-
-//LARGE_INTEGER转ULONG
+// LARGE_INTEGER and ULONG interconversion
 ULONG FBLIntToUl(LARGE_INTEGER x);
-
-//ULONG转LARGE_INTEGER
 LARGE_INTEGER FBUlToLInt(ULONG x);
 
-// 获取文件字节数（单位：字节）
-LARGE_INTEGER FBGetFileSize(const char* filePath);
+// Retrieve the number of bytes in the file (unit: bytes)
+LARGE_INTEGER FBGetFileSize(std::_tstring filePath);
 
-// 按字节读文件（磁盘）
-DWORD FBReadFile(const char* lpcFilePath, // 文件路径
-    UCHAR* lpcData, // 接收数据段指针
-    LPDWORD lpdwBytesRead, // 接收读取字节数指针 
-    LONG uiRstart, // 读取起始地址
-    DWORD uiRsize = FB_UL_INF // 读取总大小（FB_UI_INF表示到末尾）
+// Read files by byte (or disk)
+DWORD FBReadFile(std::_tstring lpcFilePath, // File path
+    BYTE* lpcData, // Read data segment pointer
+    LPDWORD lpdwBytesRead, // Receive read byte pointer
+    LONG uiRstart, // Starting address for reading
+    DWORD uiRsize = FB_UL_INF // Read the total size (FB_UL_INF represents to the end)
 );
 
-// 按字节写文件（磁盘）
-DWORD FBWriteFile(const char* lpcFilePath, // 文件路径
-    UCHAR* lpcData, // 写入数据段指针
-    LPDWORD lpdwBytesWrite, // 接收写入字节数指针 
-    LONG uiWstart, // 写入起始地址
-    DWORD uiWsize // 写入总大小
+// Write files by byte (or disk)
+DWORD FBWriteFile(std::_tstring lpcFilePath, // File path
+    BYTE* lpcData, // Write data segment pointer
+    LPDWORD lpdwBytesWrite, // Receive write byte pointer
+    LONG uiWstart, // Starting address for writing
+    DWORD uiWsize // Write total size
 );
 
 #endif
