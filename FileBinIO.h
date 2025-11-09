@@ -33,11 +33,11 @@
 #define _tstring string
 #endif
 
-enum FB_RESULTS {
-    FB_SUCCESS = 0x0, 
-    FB_ERROR = 0x1, 
-    FB_FILE_NOT_EXIST = 0x2, 
-    FB_OUT_OF_RANGE = 0x4, 
+enum FB_RESULTS : DWORD {
+    FB_SUCCESS = 0x0,
+    FB_ERROR = 0x1,
+    FB_FILE_NOT_EXIST = 0x2,
+    FB_OUT_OF_RANGE = 0x4,
     FB_INVAILD_POINTER = 0x8
 };
 
@@ -56,22 +56,22 @@ ULONG FBLIntToUl(LARGE_INTEGER x);
 LARGE_INTEGER FBUlToLInt(ULONG x);
 
 // Retrieve the number of bytes in the file (unit: bytes)
-LARGE_INTEGER FBGetFileSize(std::_tstring filePath);
+LARGE_INTEGER FBGetFileSize(std::_tstring FilePath);
 
 // Read files by byte (or disk)
-DWORD FBReadFile(std::_tstring lpcFilePath, // File path
-    BYTE* lpcData, // Read data segment pointer
+DWORD FBReadFile(std::_tstring FilePath, // File path
+    BYTE* pData, // Read data segment pointer
     LPDWORD lpdwBytesRead, // Receive read byte pointer
-    LONG uiRstart, // Starting address for reading
-    DWORD uiRsize = FB_UL_INF // Read the total size (FB_UL_INF represents to the end)
+    LONG nStart, // Starting address for reading
+    DWORD nSize = FB_UL_INF // Read the total size (FB_UL_INF represents to the end)
 );
 
 // Write files by byte (or disk)
-DWORD FBWriteFile(std::_tstring lpcFilePath, // File path
-    BYTE* lpcData, // Write data segment pointer
+DWORD FBWriteFile(std::_tstring FilePath, // File path
+    BYTE* pData, // Write data segment pointer
     LPDWORD lpdwBytesWrite, // Receive write byte pointer
-    LONG uiWstart, // Starting address for writing
-    DWORD uiWsize // Write total size
+    LONG nStart, // Starting address for writing
+    DWORD nSize // Write total size
 );
 
 #endif

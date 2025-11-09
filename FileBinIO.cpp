@@ -42,12 +42,12 @@ LARGE_INTEGER FBUlToLInt(ULONG x) {
 }
 
 // Retrieve the number of bytes in the file (unit: bytes)
-LARGE_INTEGER FBGetFileSize(std::_tstring filePath) {
+LARGE_INTEGER FBGetFileSize(std::_tstring FilePath) {
     LARGE_INTEGER fileSize;
     fileSize.QuadPart = 0;
 
     // 打开文件以读取其大小
-    HANDLE hFile = CreateFile(filePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE hFile = CreateFile(FilePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
     if (hFile == INVALID_HANDLE_VALUE) return fileSize;
 
@@ -64,33 +64,33 @@ LARGE_INTEGER FBGetFileSize(std::_tstring filePath) {
 }
 
 // Read files by byte (or disk)
-DWORD FBReadFile(std::_tstring lpcFilePath,
-    BYTE* lpcData,
+DWORD FBReadFile(std::_tstring FilePath,
+    BYTE* pData,
     LPDWORD lpdwBytesRead,
-    LONG uiRstart,
-    DWORD uiRsize
+    LONG nStart,
+    DWORD dwSize
 ) {
-    LARGE_INTEGER liFileSize = FBGetFileSize(lpcFilePath);
+    LARGE_INTEGER liFileSize = FBGetFileSize(FilePath);
 
     // Identify the possibility of overflow and avoid it
-    if (lpcData == NULL) return FB_INVAILD_POINTER;
-    if (uiRsize != FB_UL_INF && 1UL * sizeof(UCHAR) * uiRsize > FBLIntToUl(liFileSize)) return FB_OUT_OF_RANGE;
+    if (pData == NULL) return FB_INVAILD_POINTER;
+    if (dwSize != FB_UL_INF && 1UL * sizeof(UCHAR) * dwSize > FBLIntToUl(liFileSize)) return FB_OUT_OF_RANGE;
 
     // Create file object
-    HANDLE hFile = CreateFile(lpcFilePath.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE hFile = CreateFile(FilePath.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return FB_ERROR;
 
     // Number of bytes read
     DWORD dwBytesRead;
 
     // Set Start Position
-    if (SetFilePointer(hFile, uiRstart, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER) {
+    if (SetFilePointer(hFile, nStart, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER) {
         CloseHandle(hFile);
         return FB_ERROR;
     }
 
     // Read the file and close the handle
-    BOOL result = ReadFile(hFile, lpcData, FBMin <ULONG> (uiRsize, FBLIntToUl(liFileSize)), &dwBytesRead, NULL);
+    BOOL result = ReadFile(hFile, pData, FBMin <ULONG> (dwSize, FBLIntToUl(liFileSize)), &dwBytesRead, NULL);
     CloseHandle(hFile);
 
     // Processing read failed
@@ -101,30 +101,30 @@ DWORD FBReadFile(std::_tstring lpcFilePath,
 }
 
 // Write files by byte (or disk)
-DWORD FBWriteFile(std::_tstring lpcFilePath,
-    BYTE* lpcData,
+DWORD FBWriteFile(std::_tstring FilePath,
+    BYTE* pData,
     LPDWORD lpdwBytesWrite,
-    LONG uiWstart,
-    DWORD uiWsize
+    LONG nStart,
+    DWORD dwSize
 ) {
     // Identify null pointers and avoid them
-    if (lpcData == NULL) return FB_INVAILD_POINTER;
+    if (pData == NULL) return FB_INVAILD_POINTER;
 
     // Create file object
-    HANDLE hFile = CreateFile(lpcFilePath.c_str(), GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE hFile = CreateFile(FilePath.c_str(), GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return FB_ERROR;
 
     // Number of bytes written
     DWORD dwBytesWrite;
 
     // Set Start Position
-    if (SetFilePointer(hFile, uiWstart, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER) {
+    if (SetFilePointer(hFile, nStart, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER) {
         CloseHandle(hFile);
         return FB_ERROR;
     }
 
     // Write file and close handle
-    BOOL result = WriteFile(hFile, lpcData, uiWsize, &dwBytesWrite, NULL);
+    BOOL result = WriteFile(hFile, pData, dwSize, &dwBytesWrite, NULL);
     CloseHandle(hFile);
 
     // Processing write failed
